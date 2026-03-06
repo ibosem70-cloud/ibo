@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة المتصدرين الاحترافية</title>
+    <style>
+        /* التنسيق العام */
+        * { box-sizing: border-box; }
+        body { 
+            background: #000; 
+            margin: 0; 
+            padding: 100px 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            overflow: hidden; 
+            color: #fff; 
+        }
+
+        /* حاوية التمرير */
+        .scroller { 
+            width: 100%; 
+            padding: 40px 0; 
+            overflow-x: auto; 
+            white-space: nowrap; 
+            background: #000; 
+            cursor: grab; 
+            border-top: 3px solid #ff0050; 
+            border-bottom: 3px solid #ff0050; 
+            scroll-behavior: smooth; 
+        }
+        .scroller::-webkit-scrollbar { display: none; }
+        
+        .track { 
+            display: inline-flex; 
+            gap: 25px; 
+            padding: 0 60px; 
+            align-items: center; 
+        }
+        
+        /* تصميم الكارت */
+        .card { 
+            display: inline-flex; 
+            background: #000; 
+            width: 340px; 
+            height: 135px; 
+            border-radius: 25px; 
+            border: 3px solid #ff0050; 
+            align-items: center; 
+            flex-direction: row-reverse; 
+            padding: 0 15px; 
+            position: relative; 
+            flex-shrink: 0; 
+            box-shadow: 0 0 15px rgba(255, 0, 80, 0.4);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        /* تأثير المتصدر (تاج ونبض) */
+        .first-place { 
+            border-color: #ffd700 !important; 
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6) !important; 
+            animation: pulse-glow 2s infinite;
+        }
+
+        @keyframes pulse-glow { 
+            0%, 100% { transform: scale(1); } 
+            50% { transform: scale(1.03); } 
+        }
+
+        /* الصورة الشخصية والوسام */
+        .img-box { 
+            width: 85px; 
+            height: 85px; 
+            border-radius: 50%; 
+            border: 2.5px solid #fff; 
+            position: relative; 
+            margin-left: 15px; 
+            flex-shrink: 0; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background: #1a1a1a;
+        }
+        .p-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        
+        .badge { 
+            position: absolute; 
+            bottom: -5px; 
+            right: -5px; 
+            width: 35px; 
+            height: 35px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: bold; 
+            border: 2px solid #000; 
+            font-size: 18px; 
+            color: #000; 
+        }
+
+        /* المعلومات والنقاط */
+        .info { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: flex-start; 
+            flex-grow: 1; 
+            text-align: right; 
+            overflow: hidden; 
+        }
+        .nickname { color: #fff; font-size: 21px; font-weight: 900; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .user-tag { color: #ff0050; font-size: 14px; font-weight: bold; margin-bottom: 8px; outline: none; cursor: text; }
+        
+        .score-box { background: #000; border: 2px solid #333; border-radius: 12px; width: 140px; padding: 5px 0; }
+        .score-input { 
+            color: #ffff00 !important; 
+            font-size: 30px; 
+            font-weight: 900; 
+            background: transparent; 
+            border: none; 
+            width: 100%; 
+            text-align: center; 
+            outline: none; 
+        }
+        .score-input::-webkit-inner-spin-button, .score-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+        /* أزرار التحكم */
+        .del-btn { 
+            position: absolute; 
+            top: 10px; 
+            left: 10px; 
+            background: rgba(255,0,80,0.15); 
+            color: #ff0050; 
+            border: none; 
+            border-radius: 50%; 
+            width: 25px; 
+            height: 25px; 
+            font-size: 12px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            opacity: 0; 
+            transition: 0.3s; 
+            z-index: 10;
+        }
+        .card:hover .del-btn { opacity: 1; }
+        .del-btn:hover { background: #ff0050; color: #fff; }
+
+        .add-btn { 
+            position: fixed; 
+            bottom: 40px; 
+            right: 40px; 
+            width: 70px; 
+            height: 70px; 
+            background: #ff0050; 
+            color: #fff; 
+            border: none; 
+            border-radius: 50%; 
+            font-size: 40px; 
+            cursor: pointer; 
+            z-index: 1000; 
+            box-shadow: 0 0 20px rgba(255, 0, 80, 0.6);
+            transition: 0.3s;
+        }
+        .add-btn:hover { transform: scale(1.1); background: #ff2d6d; }
+    </style>
+</head>
+<body>
+
+    <div class="scroller" id="box">
+        <div class="track" id="tr"></div>
+    </div>
+
+    <button class="add-btn" onclick="add(); saveAll();">+</button>
+
+    <script>
+        const b = document.getElementById('box'), tr = document.getElementById('tr');
+        const STORAGE_KEY = 'tiktok_leaderboard_v3';
+
+        // دالة الحفظ
+        function saveAll() {
+            const data = [];
+            document.querySelectorAll('.card').forEach(c => {
+                data.push({
+                    name: c.querySelector('.nickname').innerText,
+                    tag: c.querySelector('.user-tag').innerText,
+                    score: c.querySelector('.score-input').value,
+                    img: c.querySelector('.p-img').src
+                });
+            });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        // دالة التحميل
+        function loadAll() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            tr.innerHTML = ""; 
+            if(saved) {
+                const data = JSON.parse(saved);
+                if(data.length > 0) {
+                    data.forEach(d => add(d.name, d.tag, d.score, d.img));
+                    return;
+                }
+            }
+            // افتراضي إذا لم يوجد بيانات
+            for(let i=0; i<3; i++) add();
+        }
+
+        // دالة إضافة كارت جديد
+        function add(name="لاعب جديد", tag="@اليوزر", score=0, img="https://ui-avatars.com/api/?name=?&background=333&color=fff") {
+            const c = document.createElement('div'); 
+            c.className = 'card';
+            c.innerHTML = `
+                <button class="del-btn" onclick="this.parentElement.remove(); sortCards(); saveAll();">✕</button>
+                <div class="img-box">
+                    <img src="${img}" class="p-img" onerror="this.src='https://ui-avatars.com/api/?name=?'">
+                    <div class="badge"></div>
+                </div>
+                <div class="info">
+                    <span class="nickname">${name}</span>
+                    <span class="user-tag" contenteditable="true" onblur="updateUser(this)">${tag}</span>
+                    <div class="score-box">
+                        <input type="number" class="score-input" value="${score}" 
+                            onkeydown="if(event.key==='Enter') this.blur()" 
+                            oninput="sortCards()" onblur="saveAll()">
+                    </div>
+                </div>`;
+            tr.appendChild(c);
+            sortCards();
+        }
+
+        // دالة الترتيب الذكي
+        function sortCards() {
+            const activeEl = document.activeElement;
+            const cards = Array.from(tr.getElementsByClassName('card'));
+            
+            cards.sort((a, b) => {
+                const vA = parseInt(a.querySelector('.score-input').value) || 0;
+                const vB = parseInt(b.querySelector('.score-input').value) || 0;
+                return vB - vA;
+            });
+            
+            cards.forEach((c, i) => {
+                tr.appendChild(c); 
+                const p = i + 1;
+                const badge = c.querySelector('.badge');
+                
+                // تحديث الأوسمة
+                badge.innerText = p==1?'👑':p==2?'🥈':p==3?'🥉':p;
+                badge.style.background = p==1?'#FFD700':p==2?'#C0C0C0':p==3?'#CD7F32':'#444';
+                
+                // تأثير المركز الأول
+                p === 1 ? c.classList.add('first-place') : c.classList.remove('first-place');
+            });
+
+            // الحفاظ على تركيز الماوس أثناء الكتابة
+            if (activeEl && activeEl.classList.contains('score-input')) activeEl.focus();
+        }
+
+        // دالة تحديث بيانات التيك توك
+        async function updateUser(e) {
+            let u = e.innerText.replace('@','').trim();
+            const crd = e.closest('.card');
+            if(!u || u === "اليوزر") return;
+
+            // تحديث الصورة فوراً (Preview)
+            crd.querySelector('.p-img').src = `https://unavatar.io/tiktok/${u}`;
+
+            try {
+                const proxyUrl = "https://api.codetabs.com/v1/proxy/?quest=";
+                const targetUrl = `https://www.tiktok.com/@${u}`;
+                const r = await fetch(proxyUrl + encodeURIComponent(targetUrl));
+                const h = await r.text();
+                const m = h.match(/"nickname":"(.*?)"/);
+                
+                if(m && m[1]) {
+                    crd.querySelector('.nickname').innerText = decodeURI(JSON.parse('"' + m[1] + '"'));
+                } else {
+                    crd.querySelector('.nickname').innerText = u;
+                }
+            } catch(x) {
+                crd.querySelector('.nickname').innerText = u;
+            }
+            saveAll();
+        }
+
+        // تشغيل التحميل عند البداية
+        loadAll();
+
+        // خاصية التمرير (Drag to scroll)
+        let isDown = false, startX, scrollLeft;
+        b.onmousedown = (e) => {
+            if(e.target.tagName === 'INPUT' || e.target.contentEditable === "true") return;
+            isDown = true;
+            startX = e.pageX - b.offsetLeft;
+            scrollLeft = b.scrollLeft;
+        };
+        window.onmouseup = () => isDown = false;
+        b.onmousemove = (e) => {
+            if(!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - b.offsetLeft;
+            const walk = (x - startX) * 2;
+            b.scrollLeft = scrollLeft - walk;
+        };
+    </script>
+</body>
+</html>
