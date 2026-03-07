@@ -3,175 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة المتصدرين - نسخة العودة</title>
+    <title>لوحة المتصدرين - نسخة استعادة الأبطال</title>
     <style>
         * { box-sizing: border-box; }
-        body {
-            background: #000;
-            margin: 0;
-            padding: 120px 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
-            color: #fff;
-        }
-        .controls {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            display: flex;
-            gap: 10px;
-        }
-        .control-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid #444;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            backdrop-filter: blur(5px);
-        }
-        .control-btn:hover { background: rgba(255, 255, 255, 0.2); }
+        body { background: #000; margin: 0; padding: 120px 0; font-family: 'Segoe UI', sans-serif; overflow: hidden; color: #fff; }
+        .controls { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; gap: 10px; }
+        .control-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid #444; color: white; padding: 8px 15px; border-radius: 5px; cursor: pointer; backdrop-filter: blur(5px); }
         .scroller { width: 100%; padding: 60px 0; overflow-x: auto; white-space: nowrap; cursor: grab; border-top: 3px solid #ff0050; border-bottom: 3px solid #00f0ff; }
-        .scroller::-webkit-scrollbar { display: none; }
-        .track { display: inline-flex; gap: 30px; padding: 0 50px; transition: transform 0.1s; }
-        .card {
-            background: #111;
-            border: 2px solid #333;
-            border-radius: 20px;
-            width: 320px;
-            padding: 20px;
-            display: inline-block;
-            position: relative;
-            transition: 0.3s;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .card:hover { transform: translateY(-10px); border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
-        /* وهج المراكز */
+        .track { display: inline-flex; gap: 30px; padding: 0 50px; }
+        .card { background: #111; border: 2px solid #333; border-radius: 20px; width: 320px; padding: 20px; display: inline-block; position: relative; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .card:hover { transform: translateY(-10px); border-color: #fff; }
         .card[data-rank="1"] { border-color: #ffd700; box-shadow: 0 0 25px rgba(255, 215, 0, 0.4); }
-        .card[data-rank="2"] { border-color: #c0c0c0; box-shadow: 0 0 20px rgba(192, 192, 192, 0.3); }
-        .card[data-rank="3"] { border-color: #cd7f32; box-shadow: 0 0 15px rgba(205, 127, 50, 0.2); }
-
-        .rank-badge {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            width: 40px;
-            height: 40px;
-            background: #222;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            border: 2px solid #444;
-        }
-        .card[data-rank="1"] .rank-badge { background: #ffd700; color: #000; border-color: #fff; }
-        
-        .photo-container { width: 100px; height: 100px; margin-bottom: 15px; position: relative; }
+        .rank-badge { position: absolute; bottom: 20px; left: 20px; width: 40px; height: 40px; background: #222; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #444; }
+        .photo-container { width: 100px; height: 100px; position: relative; }
         .photo-container img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #444; }
-        
-        .info { flex-grow: 1; text-align: right; }
         .name-input { background: none; border: none; color: #fff; font-size: 24px; font-weight: bold; width: 100%; text-align: right; outline: none; }
-        .tag-input { background: none; border: none; color: #ff0050; font-size: 14px; width: 100%; text-align: right; outline: none; }
-        
-        .score-box { background: #222; border-radius: 12px; padding: 10px 20px; display: flex; align-items: center; gap: 15px; margin-top: 10px; }
         .score-input { background: none; border: none; color: #ffff00; font-size: 32px; font-weight: 900; width: 80px; text-align: center; outline: none; }
-        
-        .btn-group { display: flex; flex-direction: column; gap: 5px; }
-        .math-btn { background: #333; border: none; color: #fff; width: 25px; height: 25px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .math-btn:hover { background: #444; }
-        
+        .math-btn { background: #333; border: none; color: #fff; width: 30px; height: 30px; border-radius: 4px; cursor: pointer; }
         .del-btn { position: absolute; top: 10px; left: 10px; background: rgba(255,0,0,0.2); border: none; color: #ff4444; width: 25px; height: 25px; border-radius: 50%; cursor: pointer; display: none; }
         .card:hover .del-btn { display: block; }
-        .add-btn { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #ff0050; border: none; color: #fff; width: 60px; height: 60px; border-radius: 50%; font-size: 30px; cursor: pointer; box-shadow: 0 0 20px rgba(255,0,80,0.5); z-index: 1000; }
-        
-        /* وضع القفل */
-        .locked .del-btn, .locked .add-btn, .locked .btn-group { display: none !important; }
-        .locked .name-input, .locked .tag-input, .locked .score-input { pointer-events: none; }
+        .add-btn { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #ff0050; border: none; color: #fff; width: 60px; height: 60px; border-radius: 50%; font-size: 30px; cursor: pointer; z-index: 1000; }
+        .locked .del-btn, .locked .add-btn, .locked .math-btn { display: none !important; }
+        .locked input { pointer-events: none; }
     </style>
 </head>
 <body>
-
     <div class="controls">
         <button id="lockBtn" class="control-btn" onclick="toggleLock()">🔓 وضع التعديل: مفتوح</button>
-        <button class="control-btn" onclick="clearAllData()">⚠️ مسح الكل وابدأ من جديد</button>
     </div>
-
-    <div class="scroller" id="box">
-        <div class="track" id="tr"></div>
-    </div>
-
+    <div class="scroller"><div class="track" id="tr"></div></div>
     <button class="add-btn" onclick="add()">+</button>
 
     <script>
-        const b = document.getElementById('box'), tr = document.getElementById('tr');
-        const lockBtn = document.getElementById('lockBtn');
-        // سنستخدم مفتاح جديد تماماً لنبدأ صفحة نظيفة
-        const STORAGE_KEY = 'leaderboard_final_fixed';
+        const tr = document.getElementById('tr');
+        // المفاتيح القديمة والجديدة
+        const KEYS = ['tiktok_leaderboard_v1', 'tiktok_leaderboard_v4', 'leaderboard_final_fixed'];
         let isLocked = false;
 
         function toggleLock() {
             isLocked = !isLocked;
             document.body.classList.toggle('locked', isLocked);
-            lockBtn.innerText = isLocked ? "🔒 وضع العرض: مغلق" : "🔓 وضع التعديل: مفتوح";
-            lockBtn.style.background = isLocked ? "rgba(255,0,0,0.2)" : "rgba(0,255,0,0.1)";
+            document.getElementById('lockBtn').innerText = isLocked ? "🔒 وضع العرض: مغلق" : "🔓 وضع التعديل: مفتوح";
         }
 
         function save() {
             const data = [];
             document.querySelectorAll('.card').forEach(c => {
-                data.push({
-                    n: c.querySelector('.name-input').value,
-                    t: c.querySelector('.tag-input').value,
-                    s: c.querySelector('.score-input').value,
-                    img: c.querySelector('img').src
-                });
+                data.push({ n: c.querySelector('.name-input').value, s: c.querySelector('.score-input').value, img: c.querySelector('img').src });
             });
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            localStorage.setItem('leaderboard_final_fixed', JSON.stringify(data));
         }
 
         function load() {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if (saved) {
-                JSON.parse(saved).forEach(d => add(d.n, d.t, d.s, d.img));
-                sort();
+            let allSavedData = [];
+            // تحدي: البحث في كل المخازن القديمة لاستخراج "الشباب"
+            KEYS.forEach(key => {
+                const data = localStorage.getItem(key);
+                if (data) {
+                    const parsed = JSON.parse(data);
+                    parsed.forEach(item => {
+                        // منع التكرار
+                        if (!allSavedData.find(ex => ex.n === (item.n || item.name))) {
+                            allSavedData.push({ n: item.n || item.name, s: item.s || item.score, img: item.img || item.photo });
+                        }
+                    });
+                }
+            });
+
+            if (allSavedData.length > 0) {
+                allSavedData.forEach(d => add(d.n, d.s, d.img));
             }
         }
 
-        function add(n='', t='@اليوزر', s='0', img='https://via.placeholder.com/100') {
+        function add(n='لاعب جديد', s='0', img='https://via.placeholder.com/100') {
             const c = document.createElement('div');
             c.className = 'card';
             c.innerHTML = `
-                <button class="del-btn" onclick="askDelete(this)">×</button>
+                <button class="del-btn" onclick="if(confirm('حذف؟')){this.parentElement.remove();save();sort();}">×</button>
                 <div style="display: flex; align-items: center; gap: 15px;">
                     <div class="photo-container">
-                        <img src="${img}" onclick="changeImg(this)">
-                        <div class="rank-badge">0</div>
+                        <img src="${img}" onclick="const u=prompt('رابط الصورة:',this.src);if(u){this.src=u;save();}">
+                        <div class="rank-badge"></div>
                     </div>
                     <div class="info">
-                        <input class="name-input" value="${n}" placeholder="الاسم..." oninput="save()">
-                        <input class="tag-input" value="${t}" oninput="save()">
-                        <div class="score-box">
-                            <div class="btn-group">
-                                <button class="math-btn" onclick="step(this,1)">+</button>
-                                <button class="math-btn" onclick="step(this,-1)">-</button>
-                            </div>
-                            <input class="score-input" type="number" value="${s}" oninput="sort();save()">
+                        <input class="name-input" value="${n}" oninput="save()">
+                        <div style="display:flex; align-items:center; gap:10px; background:#222; padding:5px; border-radius:10px; margin-top:5px;">
+                            <button class="math-btn" onclick="this.nextElementSibling.value++;save();sort();">+</button>
+                            <input class="score-input" type="number" value="${s}" oninput="save();sort();">
+                            <button class="math-btn" onclick="this.previousElementSibling.value--;save();sort();">-</button>
                         </div>
                     </div>
-                </div>
-            `;
+                </div>`;
             tr.appendChild(c);
             sort();
-            save();
-        }
-
-        function step(btn, v) {
-            const inp = btn.parentElement.parentElement.querySelector('.score-input');
-            inp.value = parseInt(inp.value) + v;
-            sort();
-            save();
         }
 
         function sort() {
@@ -183,27 +107,6 @@
                 c.querySelector('.rank-badge').innerText = i + 1;
             });
         }
-
-        function askDelete(btn) {
-            if(confirm("هل أنت متأكد من حذف هذا اللاعب؟")) {
-                btn.parentElement.remove();
-                sort();
-                save();
-            }
-        }
-
-        function changeImg(img) {
-            const url = prompt("صورة اللاعب (رابط):", img.src);
-            if(url) { img.src = url; save(); }
-        }
-
-        function clearAllData() {
-            if(confirm("سيتم مسح كل الأسماء والبدء من جديد.. هل أنت متأكد؟")) {
-                localStorage.removeItem(STORAGE_KEY);
-                location.reload();
-            }
-        }
-
         load();
     </script>
 </body>
