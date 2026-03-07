@@ -3,23 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة المتصدرين الاحترافية</title>
+    <title>لوحة المتصدرين - نسخة الأمان القصوى</title>
     <style>
-        /* التنسيق العام */
         * { box-sizing: border-box; }
         body { 
             background: #000; 
             margin: 0; 
-            padding: 100px 0; 
+            padding: 120px 0; 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             overflow: hidden; 
             color: #fff; 
         }
 
-        /* حاوية التمرير */
         .scroller { 
             width: 100%; 
-            padding: 40px 0; 
+            padding: 60px 0; 
             overflow-x: auto; 
             white-space: nowrap; 
             background: #000; 
@@ -32,17 +30,16 @@
         
         .track { 
             display: inline-flex; 
-            gap: 25px; 
-            padding: 0 60px; 
+            gap: 30px; 
+            padding: 0 80px; 
             align-items: center; 
         }
         
-        /* تصميم الكارت */
         .card { 
             display: inline-flex; 
             background: #000; 
-            width: 340px; 
-            height: 135px; 
+            width: 350px; 
+            height: 145px; 
             border-radius: 25px; 
             border: 3px solid #ff0050; 
             align-items: center; 
@@ -50,122 +47,91 @@
             padding: 0 15px; 
             position: relative; 
             flex-shrink: 0; 
-            box-shadow: 0 0 15px rgba(255, 0, 80, 0.4);
+            box-shadow: 0 0 15px rgba(255, 0, 80, 0.3);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        
-        /* تأثير المتصدر (تاج ونبض) */
-        .first-place { 
-            border-color: #ffd700 !important; 
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6) !important; 
-            animation: pulse-glow 2s infinite;
+
+        /* تأثير التكبير والوهج */
+        .card:hover {
+            transform: scale(1.15) translateY(-20px) !important;
+            z-index: 100;
         }
+
+        .place-1 { border-color: #ffd700 !important; animation: pulse-glow 2s infinite; }
+        .place-1:hover { box-shadow: 0 0 60px rgba(255, 215, 0, 1) !important; border-color: #fff !important; }
+
+        .place-2 { border-color: #c0c0c0 !important; box-shadow: 0 0 20px rgba(192, 192, 192, 0.4); }
+        .place-2:hover { box-shadow: 0 0 50px rgba(192, 192, 192, 0.9) !important; border-color: #fff !important; }
+
+        .place-3 { border-color: #cd7f32 !important; box-shadow: 0 0 20px rgba(205, 127, 50, 0.4); }
+        .place-3:hover { box-shadow: 0 0 45px rgba(205, 127, 50, 0.9) !important; }
 
         @keyframes pulse-glow { 
-            0%, 100% { transform: scale(1); } 
-            50% { transform: scale(1.03); } 
+            0%, 100% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.4); } 
+            50% { box-shadow: 0 0 50px rgba(255, 215, 0, 0.7); } 
         }
 
-        /* الصورة الشخصية والوسام */
         .img-box { 
-            width: 85px; 
-            height: 85px; 
-            border-radius: 50%; 
-            border: 2.5px solid #fff; 
-            position: relative; 
-            margin-left: 15px; 
-            flex-shrink: 0; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            background: #1a1a1a;
+            width: 90px; height: 90px; border-radius: 50%; 
+            border: 3px solid #fff; position: relative; 
+            margin-left: 15px; flex-shrink: 0; background: #1a1a1a;
         }
-        .p-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-        
+        .p-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; transition: 0.3s; }
+        .loading .p-img { opacity: 0.3; }
+
         .badge { 
-            position: absolute; 
-            bottom: -5px; 
-            right: -5px; 
-            width: 35px; 
-            height: 35px; 
-            border-radius: 50%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-weight: bold; 
-            border: 2px solid #000; 
-            font-size: 18px; 
-            color: #000; 
+            position: absolute; bottom: -8px; right: -8px; 
+            width: 38px; height: 38px; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: bold; border: 2px solid #000; font-size: 18px; color: #000; 
         }
 
-        /* المعلومات والنقاط */
-        .info { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: flex-start; 
-            flex-grow: 1; 
-            text-align: right; 
-            overflow: hidden; 
-        }
-        .nickname { color: #fff; font-size: 21px; font-weight: 900; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
-        .user-tag { color: #ff0050; font-size: 14px; font-weight: bold; margin-bottom: 8px; outline: none; cursor: text; }
+        .info { display: flex; flex-direction: column; align-items: flex-start; flex-grow: 1; overflow: hidden; }
+        .nickname { color: #fff; font-size: 22px; font-weight: 900; margin-bottom: 2px; width: 100%; text-align: right; }
+        .user-tag { color: #ff0050; font-size: 14px; font-weight: bold; margin-bottom: 8px; cursor: text; outline: none; }
         
-        .score-box { background: #000; border: 2px solid #333; border-radius: 12px; width: 140px; padding: 5px 0; }
+        .score-box-container { display: flex; align-items: center; gap: 8px; }
+        .score-box { background: #111; border: 2px solid #333; border-radius: 12px; width: 110px; padding: 5px 0; }
         .score-input { 
-            color: #ffff00 !important; 
-            font-size: 30px; 
-            font-weight: 900; 
-            background: transparent; 
-            border: none; 
-            width: 100%; 
-            text-align: center; 
-            outline: none; 
+            color: #ffff00 !important; font-size: 32px; font-weight: 900; 
+            background: transparent; border: none; width: 100%; text-align: center; outline: none; 
         }
-        .score-input::-webkit-inner-spin-button, .score-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        .score-input::-webkit-inner-spin-button { display: none; }
 
-        /* أزرار التحكم */
+        .score-arrows { display: flex; flex-direction: column; gap: 3px; }
+        .arrow-btn { background: #222; color: #fff; border: none; border-radius: 4px; cursor: pointer; padding: 4px 10px; font-size: 10px; }
+        .arrow-btn:hover { background: #ff0050; }
+
         .del-btn { 
-            position: absolute; 
-            top: 10px; 
-            left: 10px; 
-            background: rgba(255,0,80,0.15); 
-            color: #ff0050; 
-            border: none; 
-            border-radius: 50%; 
-            width: 25px; 
-            height: 25px; 
-            font-size: 12px; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            opacity: 0; 
-            transition: 0.3s; 
-            z-index: 10;
+            position: absolute; top: 10px; left: 10px; background: rgba(255,0,80,0.2); 
+            color: #ff0050; border: none; border-radius: 50%; width: 28px; height: 28px; 
+            cursor: pointer; display: flex; align-items: center; justify-content: center; 
+            opacity: 0; transition: 0.3s; z-index: 10;
         }
         .card:hover .del-btn { opacity: 1; }
-        .del-btn:hover { background: #ff0050; color: #fff; }
-
-        .add-btn { 
-            position: fixed; 
-            bottom: 40px; 
-            right: 40px; 
-            width: 70px; 
-            height: 70px; 
-            background: #ff0050; 
-            color: #fff; 
-            border: none; 
-            border-radius: 50%; 
-            font-size: 40px; 
-            cursor: pointer; 
-            z-index: 1000; 
-            box-shadow: 0 0 20px rgba(255, 0, 80, 0.6);
-            transition: 0.3s;
+        
+        .controls { position: fixed; top: 20px; right: 20px; display: flex; gap: 15px; z-index: 2000; }
+        .control-btn { 
+            background: #222; color: #fff; border: 2px solid #444; padding: 10px 20px; 
+            border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.3s;
         }
-        .add-btn:hover { transform: scale(1.1); background: #ff2d6d; }
+        .lock-active { background: #ff0050; border-color: #ff0050; }
+        
+        .add-btn { 
+            position: fixed; bottom: 40px; right: 40px; width: 70px; height: 70px; 
+            background: #ff0050; color: #fff; border: none; border-radius: 50%; 
+            font-size: 40px; cursor: pointer; z-index: 1000; box-shadow: 0 10px 20px rgba(255,0,80,0.4);
+        }
+
+        .locked .del-btn, .locked .add-btn, .locked .score-arrows { display: none !important; }
+        .locked .score-input, .locked .user-tag { pointer-events: none; }
     </style>
 </head>
 <body>
+
+    <div class="controls">
+        <button id="lockBtn" class="control-btn" onclick="toggleLock()">🔒 وضع التعديل: مفتوح</button>
+    </div>
 
     <div class="scroller" id="box">
         <div class="track" id="tr"></div>
@@ -175,9 +141,28 @@
 
     <script>
         const b = document.getElementById('box'), tr = document.getElementById('tr');
-        const STORAGE_KEY = 'tiktok_leaderboard_v3';
+        const lockBtn = document.getElementById('lockBtn');
+        const STORAGE_KEY = 'tiktok_leaderboard_v4';
+        let isLocked = false;
 
-        // دالة الحفظ
+        function toggleLock() {
+            isLocked = !isLocked;
+            document.body.classList.toggle('locked', isLocked);
+            lockBtn.classList.toggle('lock-active', isLocked);
+            lockBtn.innerText = isLocked ? "🔓 وضع العرض: مغلق" : "🔒 وضع التعديل: مفتوح";
+        }
+
+        // دالة الحذف الجديدة مع التأكيد
+        function confirmDelete(btn) {
+            const card = btn.parentElement;
+            const name = card.querySelector('.nickname').innerText;
+            if (confirm(`هل أنت متأكد من حذف اللاعب (${name})؟`)) {
+                card.remove();
+                sortCards();
+                saveAll();
+            }
+        }
+
         function saveAll() {
             const data = [];
             document.querySelectorAll('.card').forEach(c => {
@@ -191,7 +176,6 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
         }
 
-        // دالة التحميل
         function loadAll() {
             const saved = localStorage.getItem(STORAGE_KEY);
             tr.innerHTML = ""; 
@@ -202,16 +186,21 @@
                     return;
                 }
             }
-            // افتراضي إذا لم يوجد بيانات
             for(let i=0; i<3; i++) add();
         }
 
-        // دالة إضافة كارت جديد
+        function stepScore(btn, amount) {
+            const input = btn.closest('.score-box-container').querySelector('.score-input');
+            input.value = parseInt(input.value || 0) + amount;
+            sortCards();
+            saveAll();
+        }
+
         function add(name="لاعب جديد", tag="@اليوزر", score=0, img="https://ui-avatars.com/api/?name=?&background=333&color=fff") {
             const c = document.createElement('div'); 
             c.className = 'card';
             c.innerHTML = `
-                <button class="del-btn" onclick="this.parentElement.remove(); sortCards(); saveAll();">✕</button>
+                <button class="del-btn" onclick="confirmDelete(this)">✕</button>
                 <div class="img-box">
                     <img src="${img}" class="p-img" onerror="this.src='https://ui-avatars.com/api/?name=?'">
                     <div class="badge"></div>
@@ -219,17 +208,21 @@
                 <div class="info">
                     <span class="nickname">${name}</span>
                     <span class="user-tag" contenteditable="true" onblur="updateUser(this)">${tag}</span>
-                    <div class="score-box">
-                        <input type="number" class="score-input" value="${score}" 
-                            onkeydown="if(event.key==='Enter') this.blur()" 
-                            oninput="sortCards()" onblur="saveAll()">
+                    <div class="score-box-container">
+                        <div class="score-box">
+                            <input type="number" class="score-input" value="${score}" 
+                                onblur="sortCards(); saveAll()">
+                        </div>
+                        <div class="score-arrows">
+                            <button class="arrow-btn" onclick="stepScore(this, 1)">▲</button>
+                            <button class="arrow-btn" onclick="stepScore(this, -1)">▼</button>
+                        </div>
                     </div>
                 </div>`;
             tr.appendChild(c);
             sortCards();
         }
 
-        // دالة الترتيب الذكي
         function sortCards() {
             const activeEl = document.activeElement;
             const cards = Array.from(tr.getElementsByClassName('card'));
@@ -244,64 +237,50 @@
                 tr.appendChild(c); 
                 const p = i + 1;
                 const badge = c.querySelector('.badge');
-                
-                // تحديث الأوسمة
-                badge.innerText = p==1?'👑':p==2?'🥈':p==3?'🥉':p;
+                badge.innerText = p === 1 ? '👑' : p;
                 badge.style.background = p==1?'#FFD700':p==2?'#C0C0C0':p==3?'#CD7F32':'#444';
                 
-                // تأثير المركز الأول
-                p === 1 ? c.classList.add('first-place') : c.classList.remove('first-place');
+                c.classList.remove('place-1', 'place-2', 'place-3');
+                if(p <= 3) c.classList.add('place-' + p);
             });
 
-            // الحفاظ على تركيز الماوس أثناء الكتابة
             if (activeEl && activeEl.classList.contains('score-input')) activeEl.focus();
         }
 
-        // دالة تحديث بيانات التيك توك
         async function updateUser(e) {
             let u = e.innerText.replace('@','').trim();
             const crd = e.closest('.card');
-            if(!u || u === "اليوزر") return;
-
-            // تحديث الصورة فوراً (Preview)
+            if(!u || u === "اليوزر") {
+                e.innerText = "@اليوزر";
+                return;
+            }
+            crd.classList.add('loading');
             crd.querySelector('.p-img').src = `https://unavatar.io/tiktok/${u}`;
-
             try {
-                const proxyUrl = "https://api.codetabs.com/v1/proxy/?quest=";
-                const targetUrl = `https://www.tiktok.com/@${u}`;
-                const r = await fetch(proxyUrl + encodeURIComponent(targetUrl));
+                const r = await fetch("https://api.codetabs.com/v1/proxy/?quest=" + encodeURIComponent(`https://www.tiktok.com/@${u}`));
                 const h = await r.text();
                 const m = h.match(/"nickname":"(.*?)"/);
-                
-                if(m && m[1]) {
-                    crd.querySelector('.nickname').innerText = decodeURI(JSON.parse('"' + m[1] + '"'));
-                } else {
-                    crd.querySelector('.nickname').innerText = u;
-                }
-            } catch(x) {
-                crd.querySelector('.nickname').innerText = u;
-            }
+                if(m && m[1]) crd.querySelector('.nickname').innerText = decodeURI(JSON.parse('"' + m[1] + '"'));
+            } catch(x) {}
+            crd.classList.remove('loading');
             saveAll();
         }
 
-        // تشغيل التحميل عند البداية
         loadAll();
 
-        // خاصية التمرير (Drag to scroll)
         let isDown = false, startX, scrollLeft;
         b.onmousedown = (e) => {
-            if(e.target.tagName === 'INPUT' || e.target.contentEditable === "true") return;
+            if(e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.contentEditable === "true") return;
             isDown = true;
+            b.style.cursor = 'grabbing';
             startX = e.pageX - b.offsetLeft;
             scrollLeft = b.scrollLeft;
         };
-        window.onmouseup = () => isDown = false;
+        window.onmouseup = () => { isDown = false; b.style.cursor = 'grab'; };
         b.onmousemove = (e) => {
             if(!isDown) return;
             e.preventDefault();
-            const x = e.pageX - b.offsetLeft;
-            const walk = (x - startX) * 2;
-            b.scrollLeft = scrollLeft - walk;
+            b.scrollLeft = scrollLeft - (e.pageX - b.offsetLeft - startX) * 2;
         };
     </script>
 </body>
