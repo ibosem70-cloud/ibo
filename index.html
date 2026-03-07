@@ -3,285 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة المتصدرين - نسخة الأمان القصوى</title>
+    <title>لوحة المتصدرين - نسخة العودة</title>
     <style>
         * { box-sizing: border-box; }
-        body { 
-            background: #000; 
-            margin: 0; 
-            padding: 120px 0; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            overflow: hidden; 
-            color: #fff; 
+        body {
+            background: #000;
+            margin: 0;
+            padding: 120px 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            color: #fff;
         }
-
-        .scroller { 
-            width: 100%; 
-            padding: 60px 0; 
-            overflow-x: auto; 
-            white-space: nowrap; 
-            background: #000; 
-            cursor: grab; 
-            border-top: 3px solid #ff0050; 
-            border-bottom: 3px solid #ff0050; 
-            scroll-behavior: smooth; 
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
         }
+        .control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #444;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+        }
+        .control-btn:hover { background: rgba(255, 255, 255, 0.2); }
+        .scroller { width: 100%; padding: 60px 0; overflow-x: auto; white-space: nowrap; cursor: grab; border-top: 3px solid #ff0050; border-bottom: 3px solid #00f0ff; }
         .scroller::-webkit-scrollbar { display: none; }
+        .track { display: inline-flex; gap: 30px; padding: 0 50px; transition: transform 0.1s; }
+        .card {
+            background: #111;
+            border: 2px solid #333;
+            border-radius: 20px;
+            width: 320px;
+            padding: 20px;
+            display: inline-block;
+            position: relative;
+            transition: 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .card:hover { transform: translateY(-10px); border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        /* وهج المراكز */
+        .card[data-rank="1"] { border-color: #ffd700; box-shadow: 0 0 25px rgba(255, 215, 0, 0.4); }
+        .card[data-rank="2"] { border-color: #c0c0c0; box-shadow: 0 0 20px rgba(192, 192, 192, 0.3); }
+        .card[data-rank="3"] { border-color: #cd7f32; box-shadow: 0 0 15px rgba(205, 127, 50, 0.2); }
+
+        .rank-badge {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background: #222;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid #444;
+        }
+        .card[data-rank="1"] .rank-badge { background: #ffd700; color: #000; border-color: #fff; }
         
-        .track { 
-            display: inline-flex; 
-            gap: 30px; 
-            padding: 0 80px; 
-            align-items: center; 
-        }
+        .photo-container { width: 100px; height: 100px; margin-bottom: 15px; position: relative; }
+        .photo-container img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #444; }
         
-        .card { 
-            display: inline-flex; 
-            background: #000; 
-            width: 350px; 
-            height: 145px; 
-            border-radius: 25px; 
-            border: 3px solid #ff0050; 
-            align-items: center; 
-            flex-direction: row-reverse; 
-            padding: 0 15px; 
-            position: relative; 
-            flex-shrink: 0; 
-            box-shadow: 0 0 15px rgba(255, 0, 80, 0.3);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        /* تأثير التكبير والوهج */
-        .card:hover {
-            transform: scale(1.15) translateY(-20px) !important;
-            z-index: 100;
-        }
-
-        .place-1 { border-color: #ffd700 !important; animation: pulse-glow 2s infinite; }
-        .place-1:hover { box-shadow: 0 0 60px rgba(255, 215, 0, 1) !important; border-color: #fff !important; }
-
-        .place-2 { border-color: #c0c0c0 !important; box-shadow: 0 0 20px rgba(192, 192, 192, 0.4); }
-        .place-2:hover { box-shadow: 0 0 50px rgba(192, 192, 192, 0.9) !important; border-color: #fff !important; }
-
-        .place-3 { border-color: #cd7f32 !important; box-shadow: 0 0 20px rgba(205, 127, 50, 0.4); }
-        .place-3:hover { box-shadow: 0 0 45px rgba(205, 127, 50, 0.9) !important; }
-
-        @keyframes pulse-glow { 
-            0%, 100% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.4); } 
-            50% { box-shadow: 0 0 50px rgba(255, 215, 0, 0.7); } 
-        }
-
-        .img-box { 
-            width: 90px; height: 90px; border-radius: 50%; 
-            border: 3px solid #fff; position: relative; 
-            margin-left: 15px; flex-shrink: 0; background: #1a1a1a;
-        }
-        .p-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; transition: 0.3s; }
-        .loading .p-img { opacity: 0.3; }
-
-        .badge { 
-            position: absolute; bottom: -8px; right: -8px; 
-            width: 38px; height: 38px; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; 
-            font-weight: bold; border: 2px solid #000; font-size: 18px; color: #000; 
-        }
-
-        .info { display: flex; flex-direction: column; align-items: flex-start; flex-grow: 1; overflow: hidden; }
-        .nickname { color: #fff; font-size: 22px; font-weight: 900; margin-bottom: 2px; width: 100%; text-align: right; }
-        .user-tag { color: #ff0050; font-size: 14px; font-weight: bold; margin-bottom: 8px; cursor: text; outline: none; }
+        .info { flex-grow: 1; text-align: right; }
+        .name-input { background: none; border: none; color: #fff; font-size: 24px; font-weight: bold; width: 100%; text-align: right; outline: none; }
+        .tag-input { background: none; border: none; color: #ff0050; font-size: 14px; width: 100%; text-align: right; outline: none; }
         
-        .score-box-container { display: flex; align-items: center; gap: 8px; }
-        .score-box { background: #111; border: 2px solid #333; border-radius: 12px; width: 110px; padding: 5px 0; }
-        .score-input { 
-            color: #ffff00 !important; font-size: 32px; font-weight: 900; 
-            background: transparent; border: none; width: 100%; text-align: center; outline: none; 
-        }
-        .score-input::-webkit-inner-spin-button { display: none; }
-
-        .score-arrows { display: flex; flex-direction: column; gap: 3px; }
-        .arrow-btn { background: #222; color: #fff; border: none; border-radius: 4px; cursor: pointer; padding: 4px 10px; font-size: 10px; }
-        .arrow-btn:hover { background: #ff0050; }
-
-        .del-btn { 
-            position: absolute; top: 10px; left: 10px; background: rgba(255,0,80,0.2); 
-            color: #ff0050; border: none; border-radius: 50%; width: 28px; height: 28px; 
-            cursor: pointer; display: flex; align-items: center; justify-content: center; 
-            opacity: 0; transition: 0.3s; z-index: 10;
-        }
-        .card:hover .del-btn { opacity: 1; }
+        .score-box { background: #222; border-radius: 12px; padding: 10px 20px; display: flex; align-items: center; gap: 15px; margin-top: 10px; }
+        .score-input { background: none; border: none; color: #ffff00; font-size: 32px; font-weight: 900; width: 80px; text-align: center; outline: none; }
         
-        .controls { position: fixed; top: 20px; right: 20px; display: flex; gap: 15px; z-index: 2000; }
-        .control-btn { 
-            background: #222; color: #fff; border: 2px solid #444; padding: 10px 20px; 
-            border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.3s;
-        }
-        .lock-active { background: #ff0050; border-color: #ff0050; }
+        .btn-group { display: flex; flex-direction: column; gap: 5px; }
+        .math-btn { background: #333; border: none; color: #fff; width: 25px; height: 25px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .math-btn:hover { background: #444; }
         
-        .add-btn { 
-            position: fixed; bottom: 40px; right: 40px; width: 70px; height: 70px; 
-            background: #ff0050; color: #fff; border: none; border-radius: 50%; 
-            font-size: 40px; cursor: pointer; z-index: 1000; box-shadow: 0 10px 20px rgba(255,0,80,0.4);
-        }
-
-        .locked .del-btn, .locked .add-btn, .locked .score-arrows { display: none !important; }
-        .locked .score-input, .locked .user-tag { pointer-events: none; }
+        .del-btn { position: absolute; top: 10px; left: 10px; background: rgba(255,0,0,0.2); border: none; color: #ff4444; width: 25px; height: 25px; border-radius: 50%; cursor: pointer; display: none; }
+        .card:hover .del-btn { display: block; }
+        .add-btn { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #ff0050; border: none; color: #fff; width: 60px; height: 60px; border-radius: 50%; font-size: 30px; cursor: pointer; box-shadow: 0 0 20px rgba(255,0,80,0.5); z-index: 1000; }
+        
+        /* وضع القفل */
+        .locked .del-btn, .locked .add-btn, .locked .btn-group { display: none !important; }
+        .locked .name-input, .locked .tag-input, .locked .score-input { pointer-events: none; }
     </style>
 </head>
 <body>
 
     <div class="controls">
-        <button id="lockBtn" class="control-btn" onclick="toggleLock()">🔒 وضع التعديل: مفتوح</button>
+        <button id="lockBtn" class="control-btn" onclick="toggleLock()">🔓 وضع التعديل: مفتوح</button>
+        <button class="control-btn" onclick="clearAllData()">⚠️ مسح الكل وابدأ من جديد</button>
     </div>
 
     <div class="scroller" id="box">
         <div class="track" id="tr"></div>
     </div>
 
-    <button class="add-btn" onclick="add(); saveAll();">+</button>
+    <button class="add-btn" onclick="add()">+</button>
 
     <script>
         const b = document.getElementById('box'), tr = document.getElementById('tr');
         const lockBtn = document.getElementById('lockBtn');
-        const STORAGE_KEY = 'tiktok_leaderboard_v1';
+        // سنستخدم مفتاح جديد تماماً لنبدأ صفحة نظيفة
+        const STORAGE_KEY = 'leaderboard_final_fixed';
         let isLocked = false;
 
         function toggleLock() {
             isLocked = !isLocked;
             document.body.classList.toggle('locked', isLocked);
-            lockBtn.classList.toggle('lock-active', isLocked);
-            lockBtn.innerText = isLocked ? "🔓 وضع العرض: مغلق" : "🔒 وضع التعديل: مفتوح";
+            lockBtn.innerText = isLocked ? "🔒 وضع العرض: مغلق" : "🔓 وضع التعديل: مفتوح";
+            lockBtn.style.background = isLocked ? "rgba(255,0,0,0.2)" : "rgba(0,255,0,0.1)";
         }
 
-        // دالة الحذف الجديدة مع التأكيد
-        function confirmDelete(btn) {
-            const card = btn.parentElement;
-            const name = card.querySelector('.nickname').innerText;
-            if (confirm(`هل أنت متأكد من حذف اللاعب (${name})؟`)) {
-                card.remove();
-                sortCards();
-                saveAll();
-            }
-        }
-
-        function saveAll() {
+        function save() {
             const data = [];
             document.querySelectorAll('.card').forEach(c => {
                 data.push({
-                    name: c.querySelector('.nickname').innerText,
-                    tag: c.querySelector('.user-tag').innerText,
-                    score: c.querySelector('.score-input').value,
-                    img: c.querySelector('.p-img').src
+                    n: c.querySelector('.name-input').value,
+                    t: c.querySelector('.tag-input').value,
+                    s: c.querySelector('.score-input').value,
+                    img: c.querySelector('img').src
                 });
             });
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
         }
 
-        function loadAll() {
+        function load() {
             const saved = localStorage.getItem(STORAGE_KEY);
-            tr.innerHTML = ""; 
-            if(saved) {
-                const data = JSON.parse(saved);
-                if(data.length > 0) {
-                    data.forEach(d => add(d.name, d.tag, d.score, d.img));
-                    return;
-                }
+            if (saved) {
+                JSON.parse(saved).forEach(d => add(d.n, d.t, d.s, d.img));
+                sort();
             }
-            for(let i=0; i<3; i++) add();
         }
 
-        function stepScore(btn, amount) {
-            const input = btn.closest('.score-box-container').querySelector('.score-input');
-            input.value = parseInt(input.value || 0) + amount;
-            sortCards();
-            saveAll();
-        }
-
-        function add(name="لاعب جديد", tag="@اليوزر", score=0, img="https://ui-avatars.com/api/?name=?&background=333&color=fff") {
-            const c = document.createElement('div'); 
+        function add(n='', t='@اليوزر', s='0', img='https://via.placeholder.com/100') {
+            const c = document.createElement('div');
             c.className = 'card';
             c.innerHTML = `
-                <button class="del-btn" onclick="confirmDelete(this)">✕</button>
-                <div class="img-box">
-                    <img src="${img}" class="p-img" onerror="this.src='https://ui-avatars.com/api/?name=?'">
-                    <div class="badge"></div>
-                </div>
-                <div class="info">
-                    <span class="nickname">${name}</span>
-                    <span class="user-tag" contenteditable="true" onblur="updateUser(this)">${tag}</span>
-                    <div class="score-box-container">
+                <button class="del-btn" onclick="askDelete(this)">×</button>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div class="photo-container">
+                        <img src="${img}" onclick="changeImg(this)">
+                        <div class="rank-badge">0</div>
+                    </div>
+                    <div class="info">
+                        <input class="name-input" value="${n}" placeholder="الاسم..." oninput="save()">
+                        <input class="tag-input" value="${t}" oninput="save()">
                         <div class="score-box">
-                            <input type="number" class="score-input" value="${score}" 
-                                onblur="sortCards(); saveAll()">
-                        </div>
-                        <div class="score-arrows">
-                            <button class="arrow-btn" onclick="stepScore(this, 1)">▲</button>
-                            <button class="arrow-btn" onclick="stepScore(this, -1)">▼</button>
+                            <div class="btn-group">
+                                <button class="math-btn" onclick="step(this,1)">+</button>
+                                <button class="math-btn" onclick="step(this,-1)">-</button>
+                            </div>
+                            <input class="score-input" type="number" value="${s}" oninput="sort();save()">
                         </div>
                     </div>
-                </div>`;
+                </div>
+            `;
             tr.appendChild(c);
-            sortCards();
+            sort();
+            save();
         }
 
-        function sortCards() {
-            const activeEl = document.activeElement;
-            const cards = Array.from(tr.getElementsByClassName('card'));
-            
-            cards.sort((a, b) => {
-                const vA = parseInt(a.querySelector('.score-input').value) || 0;
-                const vB = parseInt(b.querySelector('.score-input').value) || 0;
-                return vB - vA;
-            });
-            
+        function step(btn, v) {
+            const inp = btn.parentElement.parentElement.querySelector('.score-input');
+            inp.value = parseInt(inp.value) + v;
+            sort();
+            save();
+        }
+
+        function sort() {
+            const cards = Array.from(document.querySelectorAll('.card'));
+            cards.sort((a, b) => parseInt(b.querySelector('.score-input').value) - parseInt(a.querySelector('.score-input').value));
             cards.forEach((c, i) => {
-                tr.appendChild(c); 
-                const p = i + 1;
-                const badge = c.querySelector('.badge');
-                badge.innerText = p === 1 ? '👑' : p;
-                badge.style.background = p==1?'#FFD700':p==2?'#C0C0C0':p==3?'#CD7F32':'#444';
-                
-                c.classList.remove('place-1', 'place-2', 'place-3');
-                if(p <= 3) c.classList.add('place-' + p);
+                tr.appendChild(c);
+                c.setAttribute('data-rank', i + 1);
+                c.querySelector('.rank-badge').innerText = i + 1;
             });
-
-            if (activeEl && activeEl.classList.contains('score-input')) activeEl.focus();
         }
 
-        async function updateUser(e) {
-            let u = e.innerText.replace('@','').trim();
-            const crd = e.closest('.card');
-            if(!u || u === "اليوزر") {
-                e.innerText = "@اليوزر";
-                return;
+        function askDelete(btn) {
+            if(confirm("هل أنت متأكد من حذف هذا اللاعب؟")) {
+                btn.parentElement.remove();
+                sort();
+                save();
             }
-            crd.classList.add('loading');
-            crd.querySelector('.p-img').src = `https://unavatar.io/tiktok/${u}`;
-            try {
-                const r = await fetch("https://api.codetabs.com/v1/proxy/?quest=" + encodeURIComponent(`https://www.tiktok.com/@${u}`));
-                const h = await r.text();
-                const m = h.match(/"nickname":"(.*?)"/);
-                if(m && m[1]) crd.querySelector('.nickname').innerText = decodeURI(JSON.parse('"' + m[1] + '"'));
-            } catch(x) {}
-            crd.classList.remove('loading');
-            saveAll();
         }
 
-        loadAll();
+        function changeImg(img) {
+            const url = prompt("صورة اللاعب (رابط):", img.src);
+            if(url) { img.src = url; save(); }
+        }
 
-        let isDown = false, startX, scrollLeft;
-        b.onmousedown = (e) => {
-            if(e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.contentEditable === "true") return;
-            isDown = true;
-            b.style.cursor = 'grabbing';
-            startX = e.pageX - b.offsetLeft;
-            scrollLeft = b.scrollLeft;
-        };
-        window.onmouseup = () => { isDown = false; b.style.cursor = 'grab'; };
-        b.onmousemove = (e) => {
-            if(!isDown) return;
-            e.preventDefault();
-            b.scrollLeft = scrollLeft - (e.pageX - b.offsetLeft - startX) * 2;
-        };
+        function clearAllData() {
+            if(confirm("سيتم مسح كل الأسماء والبدء من جديد.. هل أنت متأكد؟")) {
+                localStorage.removeItem(STORAGE_KEY);
+                location.reload();
+            }
+        }
+
+        load();
     </script>
 </body>
 </html>
