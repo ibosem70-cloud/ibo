@@ -13,6 +13,7 @@
             overflow: hidden; 
         }
 
+        /* حاوية السحب - Scroller */
         .scroller { 
             width: 100%; 
             padding: 40px 0; 
@@ -33,6 +34,7 @@
             align-items: center; 
         }
 
+        /* أنيميشن الوهج النابض */
         @keyframes strong-pulse {
             0% { box-shadow: 0 0 15px currentcolor; }
             50% { box-shadow: 0 0 35px currentcolor; filter: brightness(1.2); }
@@ -53,6 +55,7 @@
             cursor: pointer;
         }
 
+        /* تأثير الكبسة بالماوس */
         .card:active {
             transform: scale(0.92); 
             filter: brightness(2) !important;
@@ -79,6 +82,7 @@
             text-shadow: 0 0 10px rgba(255, 102, 0, 0.7);
         }
 
+        /* ألوان المراكز */
         .place-1 { color: #ffd700; border-color: #ffd700 !important; }
         .place-2 { color: #ffffff; border-color: #ffffff !important; }
         .place-3 { color: #cd7f32; border-color: #cd7f32 !important; }
@@ -129,6 +133,7 @@
 
         for(let i=0; i<6; i++) add();
 
+        /* كود السحب يمين وشمال بالماوس */
         let isDown = false;
         let startX;
         let scrollLeft;
