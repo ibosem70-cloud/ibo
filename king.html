@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>عرش الملكة ليليث - إبراهيم المطيع</title>
+    <title>لوحة الصدارة - نظام الترتيب العام</title>
     <style>
         * { box-sizing: border-box; }
         body { 
@@ -13,7 +13,6 @@
             overflow: hidden; 
         }
 
-        /* حاوية السحب الملكية */
         .scroller { 
             width: 100%; 
             padding: 40px 0; 
@@ -34,10 +33,10 @@
             align-items: center; 
         }
 
-        /* مكافأة ليليث: أنيميشن الوهج النادر المتغير */
-        @keyframes ultra-neon {
+        /* أنيميشن الوهج المتطور (المكافأة) */
+        @keyframes custom-glow {
             0% { box-shadow: 0 0 20px currentcolor; filter: hue-rotate(0deg); }
-            50% { box-shadow: 0 0 50px currentcolor; filter: brightness(1.5) hue-rotate(20deg); }
+            50% { box-shadow: 0 0 50px currentcolor; filter: brightness(1.5) hue-rotate(15deg); }
             100% { box-shadow: 0 0 20px currentcolor; filter: hue-rotate(0deg); }
         }
 
@@ -47,19 +46,15 @@
             width: 450px; 
             height: 65px; 
             border-radius: 12px; 
-            border: 4px solid #333; /* حدود أسمك للهيبة */
+            border: 4px solid #333; 
             position: relative; 
             flex-shrink: 0; 
-            animation: ultra-neon 2s infinite ease-in-out; 
-            transition: transform 0.1s ease, filter 0.1s ease;
+            animation: custom-glow 2s infinite ease-in-out; 
+            transition: transform 0.1s ease;
             cursor: pointer;
         }
 
-        .card:active {
-            transform: scale(0.92); 
-            filter: brightness(2) !important;
-            box-shadow: 0 0 100px currentcolor !important;
-        }
+        .card:active { transform: scale(0.92); }
 
         .medal-slot { 
             position: absolute; 
@@ -67,7 +62,6 @@
             transform: translateY(-50%);
             right: 15px; 
             font-size: 32px;
-            z-index: 10;
         }
 
         .rank-number {
@@ -78,14 +72,12 @@
             font-size: 26px; 
             font-weight: 900;
             color: #ff6600; 
-            text-shadow: 0 0 10px rgba(255, 102, 0, 0.7);
         }
 
-        /* ألوان المراكز بتأثيرات ليليث الخاصة */
         .place-1 { 
             color: #ffd700; 
             border-color: #ffd700 !important;
-            background: linear-gradient(90deg, rgba(255,215,0,0.15), rgba(0,0,0,0.9)) !important;
+            background: linear-gradient(90deg, rgba(255,215,0,0.1), rgba(0,0,0,0.9)) !important;
         }
         .place-2 { color: #ffffff; border-color: #ffffff !important; }
         .place-3 { color: #cd7f32; border-color: #cd7f32 !important; }
@@ -96,21 +88,14 @@
             width: 65px; height: 65px; background: #ff0050; 
             color: #fff; border: none; border-radius: 50%; 
             font-size: 35px; cursor: pointer; z-index: 1000; 
-            box-shadow: 0 0 20px #ff0050;
         }
     </style>
 </head>
 <body>
-
-    <div class="scroller" id="box">
-        <div class="track" id="tr"></div>
-    </div>
-
+    <div class="scroller" id="box"><div class="track" id="tr"></div></div>
     <button class="add-btn" onclick="add()">+</button>
-
     <script>
         const b = document.getElementById('box'), tr = document.getElementById('tr');
-
         function add() {
             const c = document.createElement('div'); 
             c.className = 'card';
@@ -119,47 +104,26 @@
             updateStatus();
             b.scrollTo({ left: b.scrollWidth, behavior: 'smooth' });
         }
-
         function updateStatus() {
             const cards = Array.from(tr.getElementsByClassName('card'));
             cards.forEach((c, i) => {
                 const p = i + 1;
-                const rankNum = c.querySelector('.rank-number');
-                const medal = c.querySelector('.medal-slot');
-                rankNum.innerText = '#' + p;
+                const r = c.querySelector('.rank-number');
+                const m = c.querySelector('.medal-slot');
+                r.innerText = '#' + p;
                 c.classList.remove('place-1', 'place-2', 'place-3', 'place-normal');
-                if(p === 1) { c.classList.add('place-1'); medal.innerHTML = '👑'; }
-                else if(p === 2) { c.classList.add('place-2'); medal.innerHTML = '🥈'; }
-                else if(p === 3) { c.classList.add('place-3'); medal.innerHTML = '🥉'; }
-                else { c.classList.add('place-normal'); medal.innerHTML = ''; }
+                if(p === 1) { c.classList.add('place-1'); m.innerHTML = '👑'; }
+                else if(p === 2) { c.classList.add('place-2'); m.innerHTML = '🥈'; }
+                else if(p === 3) { c.classList.add('place-3'); m.innerHTML = '🥉'; }
+                else { c.classList.add('place-normal'); m.innerHTML = ''; }
             });
         }
-
-        // إنشاء البطاقات الست الأساسية
         for(let i=0; i<6; i++) add();
-
-        /* كود السحب الاحترافي بالماوس */
-        let isDown = false;
-        let startX;
-        let scrollLeft;
-
-        b.addEventListener('mousedown', (e) => {
-            isDown = true;
-            b.style.cursor = 'grabbing';
-            startX = e.pageX - b.offsetLeft;
-            scrollLeft = b.scrollLeft;
-        });
-
-        b.addEventListener('mouseleave', () => { isDown = false; b.style.cursor = 'grab'; });
-        b.addEventListener('mouseup', () => { isDown = false; b.style.cursor = 'grab'; });
-
-        b.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - b.offsetLeft;
-            const walk = (x - startX) * 2; 
-            b.scrollLeft = scrollLeft - walk;
-        });
+        let isDown = false, startX, scrollLeft;
+        b.addEventListener('mousedown', (e) => { isDown = true; startX = e.pageX - b.offsetLeft; scrollLeft = b.scrollLeft; });
+        b.addEventListener('mouseleave', () => isDown = false);
+        b.addEventListener('mouseup', () => isDown = false);
+        b.addEventListener('mousemove', (e) => { if(!isDown) return; e.preventDefault(); const x = e.pageX - b.offsetLeft; const walk = (x - startX) * 2; b.scrollLeft = scrollLeft - walk; });
     </script>
 </body>
 </html>
