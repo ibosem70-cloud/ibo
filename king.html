@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة الملكة ليليث</title>
+    <style>
+        body { background-color: transparent; margin: 0; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .leaderboard { width: 400px; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .rank-card {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 20px; border-radius: 15px; position: relative;
+            background: rgba(0, 0, 0, 0.8); border: 2px solid transparent;
+            color: white; font-weight: bold; transition: 0.3s;
+        }
+        /* المركز الأول: الملكه ليليث 👑 */
+        .rank-1 {
+            border-color: #ffd700;
+            box-shadow: 0 0 20px #ffd700, inset 0 0 10px #ffd700;
+            animation: pulse-gold 2s infinite;
+        }
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 15px #ffd700; }
+            50% { box-shadow: 0 0 30px #ffd700, 0 0 40px #ff00ff; }
+            100% { box-shadow: 0 0 15px #ffd700; }
+        }
+        .rank-2 { border-color: #c0c0c0; box-shadow: 0 0 10px #c0c0c0; }
+        .rank-3 { border-color: #cd7f32; box-shadow: 0 0 10px #cd7f32; }
+        
+        .crown { font-size: 24px; margin-right: 10px; }
+        .name { flex-grow: 1; text-align: right; font-size: 20px; margin-right: 10px; }
+        .score { font-size: 18px; color: #ffd700; }
+    </style>
+</head>
+<body>
+    <div class="leaderboard">
+        <div class="rank-card rank-1">
+            <span class="score">100,000</span>
+            <span class="name">الملكه</span>
+            <span class="crown">👑</span>
+        </div>
+        <div class="rank-card rank-2">
+            <span class="score">50,000</span>
+            <span class="name">الوصيف</span>
+            <span class="crown">🥈</span>
+        </div>
+        <div class="rank-card rank-3">
+            <span class="score">25,000</span>
+            <span class="name">المقاتل</span>
+            <span class="crown">🥉</span>
+        </div>
+    </div>
+</body>
+</html>
