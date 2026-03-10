@@ -1,53 +1,155 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة الملكة ليليث</title>
+    <title>لوحة ملوك إبراهيم - الكود النهائي الشامل</title>
     <style>
-        body { background-color: transparent; margin: 0; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .leaderboard { width: 400px; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .rank-card {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 10px 20px; border-radius: 15px; position: relative;
-            background: rgba(0, 0, 0, 0.8); border: 2px solid transparent;
-            color: white; font-weight: bold; transition: 0.3s;
+        * { box-sizing: border-box; }
+        body { 
+            background: #000; 
+            margin: 0; 
+            padding: 100px 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            overflow: hidden; 
         }
-        /* المركز الأول: الملكه ليليث 👑 */
-        .rank-1 {
-            border-color: #ffd700;
-            box-shadow: 0 0 20px #ffd700, inset 0 0 10px #ffd700;
-            animation: pulse-gold 2s infinite;
+
+        .scroller { 
+            width: 100%; 
+            padding: 40px 0; 
+            overflow-x: auto; 
+            white-space: nowrap; 
+            cursor: grab; 
+            border-top: 3px solid #ff0050; 
+            border-bottom: 3px solid #ff0050; 
+            user-select: none;
         }
-        @keyframes pulse-gold {
-            0% { box-shadow: 0 0 15px #ffd700; }
-            50% { box-shadow: 0 0 30px #ffd700, 0 0 40px #ff00ff; }
-            100% { box-shadow: 0 0 15px #ffd700; }
-        }
-        .rank-2 { border-color: #c0c0c0; box-shadow: 0 0 10px #c0c0c0; }
-        .rank-3 { border-color: #cd7f32; box-shadow: 0 0 10px #cd7f32; }
+        .scroller:active { cursor: grabbing; }
+        .scroller::-webkit-scrollbar { display: none; }
         
-        .crown { font-size: 24px; margin-right: 10px; }
-        .name { flex-grow: 1; text-align: right; font-size: 20px; margin-right: 10px; }
-        .score { font-size: 18px; color: #ffd700; }
+        .track { 
+            display: inline-flex; 
+            gap: 25px; 
+            padding: 0 60px; 
+            align-items: center; 
+        }
+
+        @keyframes strong-pulse {
+            0% { box-shadow: 0 0 15px currentcolor; }
+            50% { box-shadow: 0 0 35px currentcolor; filter: brightness(1.2); }
+            100% { box-shadow: 0 0 15px currentcolor; }
+        }
+
+        .card { 
+            display: inline-flex; 
+            background: rgba(10, 10, 10, 0.9); 
+            width: 450px; 
+            height: 65px; 
+            border-radius: 12px; 
+            border: 3px solid #333; 
+            position: relative; 
+            flex-shrink: 0; 
+            animation: strong-pulse 2.5s infinite ease-in-out; 
+            transition: transform 0.1s ease, filter 0.1s ease;
+            cursor: pointer;
+        }
+
+        .card:active {
+            transform: scale(0.92); 
+            filter: brightness(2) !important;
+            box-shadow: 0 0 80px currentcolor !important;
+        }
+
+        .medal-slot { 
+            position: absolute; 
+            top: 50%;
+            transform: translateY(-50%);
+            right: 15px; 
+            font-size: 32px;
+            z-index: 10;
+        }
+
+        .rank-number {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 20px;
+            font-size: 26px; 
+            font-weight: 900;
+            color: #ff6600; 
+            text-shadow: 0 0 10px rgba(255, 102, 0, 0.7);
+        }
+
+        .place-1 { color: #ffd700; border-color: #ffd700 !important; }
+        .place-2 { color: #ffffff; border-color: #ffffff !important; }
+        .place-3 { color: #cd7f32; border-color: #cd7f32 !important; }
+        .place-normal { color: #ff0050; border-color: #ff0050 !important; }
+
+        .add-btn { 
+            position: fixed; bottom: 40px; right: 40px; 
+            width: 65px; height: 65px; background: #ff0050; 
+            color: #fff; border: none; border-radius: 50%; 
+            font-size: 35px; cursor: pointer; z-index: 1000; 
+        }
     </style>
 </head>
 <body>
-    <div class="leaderboard">
-        <div class="rank-card rank-1">
-            <span class="score">100,000</span>
-            <span class="name">الملكه</span>
-            <span class="crown">👑</span>
-        </div>
-        <div class="rank-card rank-2">
-            <span class="score">50,000</span>
-            <span class="name">الوصيف</span>
-            <span class="crown">🥈</span>
-        </div>
-        <div class="rank-card rank-3">
-            <span class="score">25,000</span>
-            <span class="name">المقاتل</span>
-            <span class="crown">🥉</span>
-        </div>
+
+    <div class="scroller" id="box">
+        <div class="track" id="tr"></div>
     </div>
+
+    <button class="add-btn" onclick="add()">+</button>
+
+    <script>
+        const b = document.getElementById('box'), tr = document.getElementById('tr');
+
+        function add() {
+            const c = document.createElement('div'); 
+            c.className = 'card';
+            c.innerHTML = `<div class="rank-number"></div><div class="medal-slot"></div>`;
+            tr.appendChild(c);
+            updateStatus();
+            b.scrollTo({ left: b.scrollWidth, behavior: 'smooth' });
+        }
+
+        function updateStatus() {
+            const cards = Array.from(tr.getElementsByClassName('card'));
+            cards.forEach((c, i) => {
+                const p = i + 1;
+                const rankNum = c.querySelector('.rank-number');
+                const medal = c.querySelector('.medal-slot');
+                rankNum.innerText = '#' + p;
+                c.classList.remove('place-1', 'place-2', 'place-3', 'place-normal');
+                if(p === 1) { c.classList.add('place-1'); medal.innerHTML = '👑'; }
+                else if(p === 2) { c.classList.add('place-2'); medal.innerHTML = '🥈'; }
+                else if(p === 3) { c.classList.add('place-3'); medal.innerHTML = '🥉'; }
+                else { c.classList.add('place-normal'); medal.innerHTML = ''; }
+            });
+        }
+
+        for(let i=0; i<6; i++) add();
+
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        b.addEventListener('mousedown', (e) => {
+            isDown = true;
+            b.classList.add('active');
+            startX = e.pageX - b.offsetLeft;
+            scrollLeft = b.scrollLeft;
+        });
+
+        b.addEventListener('mouseleave', () => { isDown = false; });
+        b.addEventListener('mouseup', () => { isDown = false; });
+
+        b.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - b.offsetLeft;
+            const walk = (x - startX) * 2; 
+            b.scrollLeft = scrollLeft - walk;
+        });
+    </script>
 </body>
 </html>
